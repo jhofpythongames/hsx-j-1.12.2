@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSX J 1.12.2 · 国际化高级编程语言</title>
+<style>
+    :root{
+        --bg:#1e1e2f;
+        --surface:#141420;
+        --surface2:#1a1a2a;
+        --border:#2a2a3a;
+        --text:#d4e0f0;
+        --text-dim:#8a8aa0;
+        --accent:#9f7aea;
+        --accent2:#63b3ed;
+        --green:#a0e0a0;
+        --orange:#f6ad55;
+        --red:#ff5555;
+        --code-bg:#0d0d17;
+        --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+        --mono:'Consolas','Fira Code',monospace;
+        --radius:12px;
+        --shadow:0 8px 30px rgba(0,0,0,0.4);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+        background:var(--bg);color:var(--text);font-family:var(--font);
+        line-height:1.75;min-height:100vh;overflow-x:hidden;
+    }
+
+    /* ===== 顶栏 ===== */
+    .topbar{
+        position:sticky;top:0;z-index:100;
+        background:rgba(15,15,26,0.92);
+        backdrop-filter:blur(12px);
+        border-bottom:1px solid var(--border);
+        padding:12px 28px;
+        display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    }
+    .logo{
+        font-family:var(--mono);font-weight:700;font-size:1.2rem;
+        color:var(--accent);letter-spacing:2px;
+    }
+    .logo span{color:var(--accent2);font-size:0.8rem;margin-left:8px;font-weight:400;}
+    .nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:24px;}
+    .nav a{
+        padding:6px 16px;border-radius:6px;
+        font-size:0.88rem;color:var(--text-dim);
+        text-decoration:none;transition:all .2s;
+    }
+    .nav a:hover{color:var(--accent);background:var(--surface2);}
+    .nav a.active{color:var(--accent);background:var(--surface);}
+
+    /* ===== Hero ===== */
+    .hero{
+        text-align:center;
+        padding:100px 20px 80px 20px;
+        position:relative;
+        overflow:hidden;
+    }
+    .hero::before{
+        content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+        background:radial-gradient(circle at 50% 0%, rgba(159,122,234,0.18) 0%, transparent 60%);
+        pointer-events:none;
+    }
+    .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto;}
+    .badge{
+        display:inline-block;
+        padding:6px 18px;
+        border:1px solid var(--border);
+        border-radius:20px;
+        font-size:0.8rem;
+        color:var(--accent2);
+        margin-bottom:24px;
+        background:rgba(99,179,237,0.08);
+        letter-spacing:1px;
+    }
+    .hero h1{
+        font-size:3.6rem;font-weight:700;
+        color:var(--accent);
+        margin-bottom:16px;letter-spacing:3px;
+        font-family:var(--mono);
+        line-height:1.2;
+    }
+    .hero .sub{
+        font-size:1.25rem;color:var(--accent2);
+        margin-bottom:20px;
+    }
+    .hero .tagline{
+        font-size:1rem;color:var(--text-dim);
+        max-width:650px;margin:0 auto 40px auto;
+        line-height:1.9;
+    }
+    .hero-buttons{
+        display:flex;justify-content:center;gap:14px;flex-wrap:wrap;
+    }
+    .btn{
+        display:inline-flex;align-items:center;gap:10px;
+        border:none;border-radius:10px;
+        padding:15px 34px;
+        font-size:1rem;font-weight:600;
+        font-family:var(--font);cursor:pointer;
+        transition:all .25s;text-decoration:none;
+    }
+    .btn.primary{background:var(--accent);color:#fff;}
+    .btn.primary:hover{
+        background:#805ad5;transform:translateY(-2px);
+        box-shadow:0 8px 25px rgba(159,122,234,0.35);
+    }
+    .btn.secondary{
+        background:transparent;color:var(--text);
+        border:1px solid var(--border);
+    }
+    .btn.secondary:hover{
+        border-color:var(--accent2);background:var(--surface2);
+    }
+
+    /* ===== 三大入口 ===== */
+    .portal-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+        gap:24px;
+        max-width:1100px;
+        margin:0 auto;
+        padding:0 24px 80px 24px;
+    }
+    .portal{
+        background:var(--surface);
+        border:1px solid var(--border);
+        border-radius:var(--radius);
+        padding:36px 30px;
+        text-align:center;
+        transition:all .3s ease;
+        position:relative;
+        overflow:hidden;
+    }
+    .portal::before{
+        content:'';position:absolute;
+        top:0;left:0;right:0;height:3px;
+        background:linear-gradient(90deg, transparent, var(--accent), transparent);
+        opacity:0;transition:opacity .3s;
+    }
+    .portal:hover{
+        border-color:var(--accent);
+        transform:translateY(-6px);
+        box-shadow:var(--shadow);
+    }
+    .portal:hover::before{opacity:1;}
+    .portal .icon{
+        font-size:2.8rem;margin-bottom:18px;display:block;
+    }
+    .portal h3{
+        font-size:1.25rem;font-weight:600;
+        color:var(--text);margin-bottom:10px;
+    }
+    .portal p{
+        font-size:0.88rem;color:var(--text-dim);
+        line-height:1.8;margin-bottom:24px;
+    }
+    .portal .btn{
+        padding:10px 28px;font-size:0.9rem;
+        width:100%;justify-content:center;
+    }
+    .portal.download .btn{background:var(--accent);color:#fff;}
+    .portal.download .btn:hover{background:#805ad5;}
+    .portal.help .btn{background:var(--accent2);color:#fff;}
+    .portal.help .btn:hover{background:#4299e1;}
+    .portal.salute .btn{
+        background:linear-gradient(135deg, #b8860b, #d4af37);
+        color:#1e1e2f;
+    }
+    .portal.salute .btn:hover{
+        background:linear-gradient(135deg, #a67c00, #f0c040);
+        box-shadow:0 8px 25px rgba(212,175,55,0.35);
+    }
+
+    /* ===== 特性 ===== */
+    .section{
+        padding:80px 24px;
+        max-width:1100px;margin:0 auto;
+    }
+    .section-title{
+        text-align:center;margin-bottom:56px;
+    }
+    .section-title h2{
+        font-size:2rem;font-weight:700;
+        color:var(--accent2);margin-bottom:10px;
+        font-family:var(--mono);
+    }
+    .section-title p{
+        font-size:0.95rem;color:var(--text-dim);
+    }
+    .features{
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+        gap:22px;
+    }
+    .feature{
+        background:var(--surface);
+        border:1px solid var(--border);
+        border-radius:var(--radius);
+        padding:28px;
+        transition:all .25s;
+    }
+    .feature:hover{
+        border-color:var(--accent);
+        transform:translateY(-3px);
+    }
+    .feature .icon{font-size:1.8rem;margin-bottom:14px;display:block;}
+    .feature h3{
+        font-size:1.05rem;font-weight:600;
+        color:var(--text);margin-bottom:8px;
+    }
+    .feature p{
+        font-size:0.86rem;color:var(--text-dim);
+        line-height:1.8;
+    }
+
+    /* ===== 页脚 ===== */
+    footer{
+        border-top:1px solid var(--border);
+        padding:40px 24px;
+        text-align:center;
+        font-size:0.85rem;
+        color:var(--text-dim);
+        background:var(--surface);
+    }
+    footer .ver{
+        font-family:var(--mono);
+        color:var(--accent);
+        font-weight:600;
+        font-size:1rem;
+        margin-bottom:6px;
+    }
+    footer .links{
+        display:flex;justify-content:center;gap:28px;
+        flex-wrap:wrap;margin:18px 0;
+    }
+    footer .links a{
+        color:var(--text-dim);text-decoration:none;
+        font-size:0.86rem;transition:color .2s;
+    }
+    footer .links a:hover{color:var(--accent);}
+
+    /* ===== 响应式 ===== */
+    @media (max-width:768px){
+        .topbar{padding:10px 16px;}
+        .nav{display:none;}
+        .hero{padding:70px 16px 60px 16px;}
+        .hero h1{font-size:2.4rem;letter-spacing:2px;}
+        .hero .sub{font-size:1.05rem;}
+        .hero .tagline{font-size:0.92rem;}
+        .btn{padding:13px 26px;font-size:0.92rem;}
+        .portal-grid{padding:0 16px 60px 16px;gap:18px;}
+        .portal{padding:28px 22px;}
+        .section{padding:60px 16px;}
+        .section-title h2{font-size:1.6rem;}
+    }
+</style>
+</head>
+<body>
+
+<!-- ===== 顶栏 ===== -->
+<div class="topbar">
+    <div class="logo">HSX J <span>1.12.2</span></div>
+    <nav class="nav">
+        <a href="#home" class="active">首页</a>
+        <a href="#portals">入口</a>
+        <a href="#features">特性</a>
+    </nav>
+</div>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="home">
+    <div class="hero-content">
+        <div class="badge">✦ 国际化高级编程语言 ✦</div>
+        <h1>HSX J</h1>
+        <div class="sub">小核心 · 38 个库 · 二进制 .hsx · 内置 IDE</div>
+        <p class="tagline">
+            一门为教学、实验和快速原型设计而生的语言。<br>
+            核心只有 let、fn、if、print，能力全部放在库里。<br>
+            完全离线，零依赖，开箱即用。
+        </p>
+        <div class="hero-buttons">
+            <a href="#portals" class="btn primary">🚀 开始探索</a>
+            <a href="https://www.showyourcode.app/share/6f4gekmvtjuw72" class="btn secondary" target="_blank" rel="noopener">📖 阅读帮助</a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 三大入口 ===== -->
+<section id="portals">
+    <div class="section-title" style="padding-top:40px;">
+        <h2>快速入口</h2>
+        <p>下载、帮助、致敬 —— 选择你想去的地方</p>
+    </div>
+    <div class="portal-grid">
+
+        <!-- 下载中心 -->
+        <div class="portal download">
+            <span class="icon">📦</span>
+            <h3>Download Center</h3>
+            <p>获取 HSX J 1.12.2 完整包<br>IDE 源码 + Windows 独立版 + 示例</p>
+            <a class="btn"
+               href="https://www.showyourcode.app/share/l74l18mvurrztr"
+               target="_blank" rel="noopener">
+                ⬇ 前往下载
+            </a>
+        </div>
+
+        <!-- 帮助文档 -->
+        <div class="portal help">
+            <span class="icon">📖</span>
+            <h3>HSX J Help</h3>
+            <p>38 个库的完整参考<br>语法、示例、文件格式说明</p>
+            <a class="btn"
+               href="https://www.showyourcode.app/share/6f4gekmvtjuw72"
+               target="_blank" rel="noopener">
+                📘 打开帮助
+            </a>
+        </div>
+
+        <!-- 致敬 -->
+        <div class="portal salute">
+            <span class="icon">🌻</span>
+            <h3>Salute</h3>
+            <p>献给周老师、平平老师<br>丫丫、奇奇，和那段幼儿园时光</p>
+            <a class="btn"
+               href="https://www.showyourcode.app/share/dhhyshmvupvlfw"
+               target="_blank" rel="noopener">
+                ✨ 前往致敬
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- ===== 特性 ===== -->
+<section class="section" id="features">
+    <div class="section-title">
+        <h2>为什么选择 HSX J</h2>
+        <p>小核心，大能力</p>
+    </div>
+    <div class="features">
+        <div class="feature">
+            <span class="icon">⚡</span>
+            <h3>小核心</h3>
+            <p>只有 let、fn、if、print 几个关键字。学起来快，读起来清楚。</p>
+        </div>
+        <div class="feature">
+            <span class="icon">📚</span>
+            <h3>38 个库</h3>
+            <p>地图、绘图、游戏、网络、文件、数据库、加密、AI —— 全部内置。</p>
+        </div>
+        <div class="feature">
+            <span class="icon">🌍</span>
+            <h3>国际化</h3>
+            <p>英文和中文标识符都支持。函数名可以用两种语言写。</p>
+        </div>
+        <div class="feature">
+            <span class="icon">📦</span>
+            <h3>二进制 .hsx</h3>
+            <p>自有文件格式：魔数、版本号、长度、UTF-8 源码。</p>
+        </div>
+        <div class="feature">
+            <span class="icon">🎮</span>
+            <h3>2D + 伪 3D 游戏</h3>
+            <p>真实窗口、键盘控制、敌人、得分、等级。</p>
+        </div>
+        <div class="feature">
+            <span class="icon">🤖</span>
+            <h3>内置 AI 助手</h3>
+            <p>离线运行、上下文记忆、先思考后回答。</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 页脚 ===== -->
+<footer>
+    <div class="ver">HSX J 1.12.2 · IDLE</div>
+    <div>国际化高级编程语言 · 小核心 · 38 个库 · 完全离线</div>
+    <div class="links">
+        <a href="https://www.showyourcode.app/share/l74l18mvurrztr" target="_blank" rel="noopener">Download Center</a>
+        <a href="https://www.showyourcode.app/share/6f4gekmvtjuw72" target="_blank" rel="noopener">Help</a>
+        <a href="https://www.showyourcode.app/share/dhhyshmvupvlfw" target="_blank" rel="noopener">Salute</a>
+    </div>
+    <div style="margin-top:18px;font-size:0.78rem;">
+        © 2026 HSX J Project
+    </div>
+</footer>
+
+<script>
+/* ============================================================
+   导航高亮
+   ============================================================ */
+const navLinks = document.querySelectorAll('.nav a');
+const sections = document.querySelectorAll('section[id]');
+
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const id = entry.target.id;
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+            });
+        }
+    });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+/* ============================================================
+   平滑滚动
+   ============================================================ */
+navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+        const href = link.getAttribute('href');
+        if (href.startsWith('#')) {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    });
+});
+</script>
+
+</body>
+</html>
